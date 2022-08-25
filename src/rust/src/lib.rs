@@ -1,6 +1,7 @@
 use extendr_api::prelude::{extendr, extendr_module, list, GetSexp, IntoRobj}; // or just use extendr_api::prelude::*;
 use extendr_api::NULL;
 
+
 //convert any extendr exportalbe Result into either list(ok=ok_value,err=NULL) or list(ok=NULL,err=err_string)
 //... where error implements Display. This error traitbound could be resolved on R side instead.
 pub fn r_result_list<T, E>(x: std::result::Result<T, E>) -> list::List

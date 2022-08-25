@@ -52,6 +52,6 @@ unwrap = function(result,call=sys.call(1L),...) {
 #' @examples stopifnot(r_user_function(is_ok=TRUE)==42L)
 r_user_function = function(is_ok) {
   if(!is_bool(is_ok)) stop("ok arg must be either scalar TRUE or FALSE")
-  result <- rust_hello_result(is_ok)
+  result = rust_hello_result(is_ok)
   unwrap(result)
 }
