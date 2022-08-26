@@ -8,5 +8,9 @@
 #' @useDynLib helloresult, .registration = TRUE
 NULL
 
-rust_hello_result <- function(is_ok) .Call(wrap__rust_hello_result, is_ok)
+#'@export
+rust_helloresult <- function(is_ok) .Call(wrap__rust_helloresult, is_ok)
+
+#'@export
+rust_hellocondition <- function(is_ok) .Call(wrap__rust_hellocondition, is_ok)
 

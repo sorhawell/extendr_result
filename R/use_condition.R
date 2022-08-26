@@ -4,41 +4,28 @@
 #' @param call a context call for what triggered the error, passed to abort(footer=). abort(call=) will annoyingly not display anonymous funcitons.
 #' @param ... any other param to rlang::abort
 #' 
-#' @importFrom rlang abort
+#' @importFrom rlang abort is_error
 #'
 #' @return eiter the ok value or no return but throw error by the err string
 #' @export
 #'
 #' @examples unwrap(rust_helloresult(TRUE))
-unwrap = function(result,call=sys.call(1L),...) {
+check_condition = function(value_or_condition,call=sys.call(1L),...) {
   
   #if not a result
-  if(!is.list(result)) {
-    abort("internal error: cannot unwrap non result",.internal = TRUE)
-  }
+  if(!is_error(value_or_condition)) return(value_or_condition)
   
-  #if result is ok
-  if(!is.null(result$ok) && is.null(result$err)) {
-    return(result$ok)
-  }
+  return(abort(
+    value_or_condition$message,
+    call = NULL,
+    footer = paste(
+      "when calling:\n",
+      paste(capture.output(print(call)),collapse="\n")
+    ),
+    ...
+  ))
   
-  #if result is error
-  if( is.null(result$ok) && !is.null(result$err)) {
-    return(abort(
-      result$err,
-      call = NULL,
-      footer = paste(
-        "when calling:\n",
-        paste(capture.output(print(call)),collapse="\n")
-      ),
-      ...
-    ))
-  }
-  
-  #if not ok XOR error, then roll over
-  abort("internal error: result object corrupted",.internal = TRUE)
 }
-
 
 
 
@@ -52,10 +39,9 @@ unwrap = function(result,call=sys.call(1L),...) {
 #' @importFrom rlang is_bool
 #'
 #' @examples stopifnot(r_user_function(is_ok=TRUE)==42L)
-r_user_function = function(is_ok) {
+r_user_function_cond = function(is_ok) {
   if(!is_bool(is_ok)) stop("ok arg must be either scalar TRUE or FALSE")
-  result = rust_helloresult(is_ok)
-  unwrap(result)
+  value_or_condition = rust_hellocondition(is_ok)
+  value = check_condition(value_or_condition)
+  value
 }
-
-
